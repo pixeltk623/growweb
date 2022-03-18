@@ -25,6 +25,27 @@
 			],*/
 		],
 
+		'master' => [
+			'title' => 'Master',
+			'icon'	=> '<i class="fa fa-home"></i>',
+			'route'	=>  'admin.category',
+			'has_submenus'	=> true,
+			'submenus'	=> [
+				'trainers' => [
+					'title' => 'All Trainers',
+					'route'	=> 'admin.category'
+				],
+				'students' => [
+					'title' => 'All Students',
+					'route'	=> 'admin.category'
+				],
+				'skills' => [
+					'title' => 'Skills',
+					'route'	=> 'admin.category'
+				]
+			],
+		]
+
 	];
 
 return $sidebarMenu;

@@ -47,3 +47,5 @@ Route::match(['get', 'post'],'/admin/category/edit/{id}', [App\Http\Controllers\
 
 Route::match(['get', 'post'],'/admin/category/change-status/{id}', [App\Http\Controllers\Admin\CategoryController::class, 'changeStatus'])->name('admin.category.change_status');
 
+Route::match(['get', 'post'],'/admin/category/delete/{id}', [App\Http\Controllers\Admin\CategoryController::class, 'delete'])->name('admin.category.delete');
+

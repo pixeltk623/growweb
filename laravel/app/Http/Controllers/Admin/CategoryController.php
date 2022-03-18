@@ -70,11 +70,17 @@ class CategoryController extends Controller
 
     public function edit($id, Request $request) {
         $findCategoryById = \App\Models\Admin\Category::where('id', $id)->first();
+
+
+
         if($request->isMethod('post')) {
             $post = $request->post();
+
+            
+
             $rules = [
                 'name' => 'required',
-                'slug' => 'required|unique:categories'
+                'slug' => 'required|unique:categories,slug,'.$findCategoryById->id,
             ];
 
             $message = [
@@ -89,7 +95,10 @@ class CategoryController extends Controller
                 'updated_by'    => Auth::guard('admin')->user()->id,
             ];
 
+
+
             $request->validate($rules, $message);
+
 
             if($findCategoryById->fill($input)->save()) {
 
@@ -113,33 +122,26 @@ class CategoryController extends Controller
         }
     }
 
-
     public function changeStatus($id, Request $request) {
 
         $findCategoryById = \App\Models\Admin\Category::where('id', $id)->first();
 
-        //dd( $findCategoryById->id);
+        //dd( $findCategoryById);
 
         $data['changeStatus'] = \App\Models\Admin\Category::where('id',$id)->pluck('status');
 
         $data['id'] = $id;
 
         if($request->isMethod('post')) {
-
             $post = $request->post();
-
             if(isset($post['status']) && $post['status']!='') {
-                
                 $input = [
                     'status'        => $post['status'],
                     'updated_at'    => \Carbon\Carbon::now(),
                     'updated_by'    => Auth::guard('admin')->user()->id,
                 ];
-
-                //dd($findCategoryById);
-
+                //dd($input);
                 if($findCategoryById->fill($input)->save()) {
-
                     \App\Models\Activity::create([
                         'type'          => 'category_status_Update',
                         'data_id'       =>  $findCategoryById->id,
@@ -147,19 +149,43 @@ class CategoryController extends Controller
                         'user_id'       =>  Auth::guard('admin')->user()->id,
                         'created_by'    =>  Auth::guard('admin')->user()->id
                     ]);
-
-                    return back()->with('success', 'Category Status created');
-
+                    return back()->with('success', 'Category Status Updated');
                 } else {
                     return back()->with('error', 'Something Error');
                 }
-
             } else {
-                return back()->with('error', 'Something Error');
+                return back()->with('success', 'You have choosen Current Status only');
             }
 
         } else {
             return view('admin.category.change_status',$data);
+        }
+    }
+
+    public function delete($id, Request $request) {
+
+        $deleteObject = \App\Models\Admin\Category::where('id', $id)->first();
+
+        //dd($deleteObject->deleted_by);
+
+        if ($deleteObject) {
+            $deleteObject->deleted_by = Auth::guard('admin')->user()->id; 
+            $deleteObject->save();
+            $deleteObject->delete();
+
+            \App\Models\Activity::create([
+                'type'          => 'category_delete',
+                'data_id'       =>  $id,
+                'data'          =>  0,
+                'user_id'       =>  Auth::guard('admin')->user()->id,
+                'created_by'    =>  Auth::guard('admin')->user()->id
+            ]);
+
+            return back()->with('success', 'Category Deleted');
+
+        } else {
+
+            return back()->with('error', 'Something Error');
         }
     }
 }

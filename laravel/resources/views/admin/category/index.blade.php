@@ -45,7 +45,7 @@
                                     <a href="{{ route('admin.category.change_status', $category->id) }}" class="btn btn-warning">Change Status</a>
                                     {{-- <a href="" class="btn btn-primary">Show</a> --}}
                                     <a href="{{ route('admin.category.edit', $category->id) }}" class="btn btn-secondary">Edit</a>
-                                    <a href="" class="btn btn-danger">Delete</a>
+                                    <a href="{{ route('admin.category.delete', $category->id) }}" class="btn btn-danger">Delete</a>
                                 </td>
                             </tr>
                         @empty
